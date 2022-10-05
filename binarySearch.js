@@ -65,7 +65,7 @@ class Tree {
     return null;
   }
 
-  levelOrder(func) {
+  levelOrder(fn) {
     const queue = [this.root];
     const nodes = [];
     while (queue.length) {
@@ -76,16 +76,14 @@ class Tree {
       if (firstNode.rightNode) queue.push(firstNode.rightNode);
     }
 
-    return typeof func === "function"
-      ? func(nodes)
-      : nodes.map((node) => node.data);
+    if (typeof fn === "function") return fn(nodes);
+    return nodes.map((node) => node.data);
   }
 
   levelOrderRec(func, nodes = [], queue = [this.root]) {
     if (!queue.length) {
-      return typeof func === "function"
-        ? func(nodes)
-        : nodes.map((node) => node.data);
+      if (typeof func === "function") return func(nodes);
+      return nodes.map((node) => node.data);
     }
     const firstNode = queue[0];
     nodes.push(firstNode);
@@ -97,25 +95,34 @@ class Tree {
 
   preorder(fn, root = this.root, data = []) {
     if (root == null) return null;
+    // Traverses tree preorder (root, left, right)
     data.push(root);
     this.preorder(fn, root.leftNode, data);
     this.preorder(fn, root.rightNode, data);
+
+    if (root !== this.root) return null;
     return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
   }
 
   inorder(fn, root = this.root, data = []) {
     if (root == null) return null;
+    // Traverses tree inorder (left, root, right)
     this.inorder(fn, root.leftNode, data);
     data.push(root);
     this.inorder(fn, root.rightNode, data);
+
+    if (root !== this.root) return null;
     return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
   }
 
   postorder(fn, root = this.root, data = []) {
     if (root == null) return null;
+    // Traverses tree inorder (left, right, root)
     this.postorder(fn, root.leftNode, data);
     this.postorder(fn, root.rightNode, data);
     data.push(root);
+    // Make sure function only gets called once
+    if (root !== this.root) return null;
     return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
   }
 
@@ -132,8 +139,7 @@ class Tree {
 }
 
 const tree = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-console.log(tree.preorder());
-console.log(tree.inorder());
-console.log(tree.postorder());
-
 console.log(tree.root);
+tree.preorder((xd) => {
+  console.log(xd.map((a) => a.data));
+});
