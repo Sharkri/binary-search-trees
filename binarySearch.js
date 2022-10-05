@@ -35,11 +35,11 @@ class Tree {
     }
   }
 
-  delete(root, key) {
+  delete(key, root = this.root) {
     if (root == null) return root;
 
-    if (key < root.data) root.leftNode = this.delete(root.leftNode, key);
-    else if (key > root.data) root.rightNode = this.delete(root.rightNode, key);
+    if (key < root.data) root.leftNode = this.delete(key, root.leftNode);
+    else if (key > root.data) root.rightNode = this.delete(key, root.rightNode);
     // if key is not greater nor less than root, key has been found
     else {
       // node with only one child or no child
@@ -49,10 +49,50 @@ class Tree {
       // node with two children: Get the next biggest value
       root.data = Tree.getMinValue(root.rightNode);
       // Delete the duplicate
-      root.rightNode = this.delete(root.rightNode, root.data);
+      root.rightNode = this.delete(root.data, root.rightNode);
     }
 
     return root;
+  }
+
+  find(value) {
+    let temp = this.root;
+    while (temp !== null) {
+      if (temp.data < value) temp = temp.rightNode;
+      else if (temp.data > value) temp = temp.leftNode;
+      else return temp;
+    }
+    return null;
+  }
+
+  levelOrder(func) {
+    const queue = [this.root];
+    const nodes = [];
+    while (queue.length) {
+      const firstNode = queue[0];
+      nodes.push(firstNode);
+      queue.shift();
+      if (firstNode.leftNode) queue.push(firstNode.leftNode);
+      if (firstNode.rightNode) queue.push(firstNode.rightNode);
+    }
+
+    return typeof func === "function"
+      ? func(nodes)
+      : nodes.map((node) => node.data);
+  }
+
+  levelOrderRec(func, nodes = [], queue = [this.root]) {
+    if (!queue.length) {
+      return typeof func === "function"
+        ? func(nodes)
+        : nodes.map((node) => node.data);
+    }
+    const firstNode = queue[0];
+    nodes.push(firstNode);
+    queue.shift();
+    if (firstNode.leftNode != null) queue.push(firstNode.leftNode);
+    if (firstNode.rightNode != null) queue.push(firstNode.rightNode);
+    return this.levelOrderRec(func, nodes, queue);
   }
 
   static getMinValue(root) {
@@ -67,8 +107,10 @@ class Tree {
   }
 }
 
-const tree = new Tree([20, 10, 25, 27]);
-tree.insert(26);
-tree.insert(24);
-tree.delete(tree.root, 20);
-console.log(tree.root);
+const tree = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+function test(nodes) {
+  console.log(nodes.map((node) => node.data * 2));
+}
+tree.levelOrder(test);
+console.log(tree.levelOrderRec());
+console.log(tree.getRoot());
