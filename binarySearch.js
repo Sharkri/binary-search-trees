@@ -95,6 +95,30 @@ class Tree {
     return this.levelOrderRec(func, nodes, queue);
   }
 
+  preorder(fn, root = this.root, data = []) {
+    if (root == null) return null;
+    data.push(root);
+    this.preorder(fn, root.leftNode, data);
+    this.preorder(fn, root.rightNode, data);
+    return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
+  }
+
+  inorder(fn, root = this.root, data = []) {
+    if (root == null) return null;
+    this.inorder(fn, root.leftNode, data);
+    data.push(root);
+    this.inorder(fn, root.rightNode, data);
+    return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
+  }
+
+  postorder(fn, root = this.root, data = []) {
+    if (root == null) return null;
+    this.postorder(fn, root.leftNode, data);
+    this.postorder(fn, root.rightNode, data);
+    data.push(root);
+    return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
+  }
+
   static getMinValue(root) {
     // Traverse down the left since left will always be lowest
     let temp = root;
@@ -108,9 +132,8 @@ class Tree {
 }
 
 const tree = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-function test(nodes) {
-  console.log(nodes.map((node) => node.data * 2));
-}
-tree.levelOrder(test);
-console.log(tree.levelOrderRec());
-console.log(tree.getRoot());
+console.log(tree.preorder());
+console.log(tree.inorder());
+console.log(tree.postorder());
+
+console.log(tree.root);
