@@ -21,17 +21,11 @@ export default class Tree {
 
   insert(value, root = this.root) {
     if (value >= root.data) {
-      if (root.rightNode === null) {
-        root.rightNode = Node(value);
-        return;
-      }
-      this.insert(value, root.rightNode);
+      if (root.rightNode === null) root.rightNode = Node(value);
+      else this.insert(value, root.rightNode);
     } else if (value < root.data) {
-      if (root.leftNode === null) {
-        root.leftNode = Node(value);
-        return;
-      }
-      this.insert(value, root.leftNode);
+      if (root.leftNode === null) root.leftNode = Node(value);
+      else this.insert(value, root.leftNode);
     }
   }
 
@@ -76,9 +70,10 @@ export default class Tree {
     const queue = [this.root];
     const nodes = [];
     while (queue.length) {
-      const firstNode = queue[0];
+      // Remove from queue and push to nodes array
+      const firstNode = queue.shift();
       nodes.push(firstNode);
-      queue.shift();
+      // Push into queue
       if (firstNode.leftNode) queue.push(firstNode.leftNode);
       if (firstNode.rightNode) queue.push(firstNode.rightNode);
     }
@@ -92,9 +87,8 @@ export default class Tree {
       if (typeof func === "function") return func(nodes);
       return nodes.map((node) => node.data);
     }
-    const firstNode = queue[0];
+    const firstNode = queue.shift();
     nodes.push(firstNode);
-    queue.shift();
     if (firstNode.leftNode != null) queue.push(firstNode.leftNode);
     if (firstNode.rightNode != null) queue.push(firstNode.rightNode);
     return this.levelOrderRec(func, nodes, queue);
@@ -149,6 +143,7 @@ export default class Tree {
       if (temp.data < node.data) temp = temp.rightNode;
       else temp = temp.leftNode;
     }
+
     return depth;
   }
 
