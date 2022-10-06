@@ -55,6 +55,13 @@ class Tree {
     return root;
   }
 
+  static getMinValue(root) {
+    // Traverse down the left since left will always be lowest
+    let temp = root;
+    while (temp.leftNode != null) temp = temp.leftNode;
+    return temp.data;
+  }
+
   find(value) {
     let temp = this.root;
     while (temp !== null) {
@@ -126,11 +133,30 @@ class Tree {
     return typeof fn === "function" ? fn(data) : data.map((node) => node.data);
   }
 
-  static getMinValue(root) {
-    // Traverse down the left since left will always be lowest
-    let temp = root;
-    while (temp.leftNode != null) temp = temp.leftNode;
-    return temp.data;
+  height(node) {
+    if (node == null) return -1;
+    const leftHeight = this.height(node.leftNode);
+    const rightHeight = this.height(node.rightNode);
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  depth(node) {
+    let temp = this.root;
+    let depth = 0;
+    while (temp !== null) {
+      if (temp.data === node.data) break;
+      depth += 1;
+      if (temp.data < node.data) temp = temp.rightNode;
+      else temp = temp.leftNode;
+    }
+    return depth;
+  }
+
+  isBalanced() {
+    const leftHeight = this.height(this.root.leftNode);
+    const rightHeight = this.height(this.root.rightNode);
+    const difference = Math.abs(leftHeight - rightHeight);
+    return difference === 0 || difference === 1;
   }
 
   getRoot() {
@@ -138,8 +164,4 @@ class Tree {
   }
 }
 
-const tree = new Tree([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-console.log(tree.root);
-tree.preorder((xd) => {
-  console.log(xd.map((a) => a.data));
-});
+const tree = new Tree([7, 8, 9]);
