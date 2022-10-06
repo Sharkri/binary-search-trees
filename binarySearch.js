@@ -159,9 +159,12 @@ class Tree {
     return difference === 0 || difference === 1;
   }
 
+  rebalance() {
+    this.array = this.inorder().sort((a, b) => a - b);
+    this.root = this.buildTree(this.array, 0, this.array.length - 1);
+  }
+
   getRoot() {
     return this.root;
   }
 }
-
-const tree = new Tree([7, 8, 9]);
