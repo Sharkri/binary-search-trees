@@ -2,7 +2,7 @@ function Node(data, leftNode = null, rightNode = null) {
   return { data, leftNode, rightNode };
 }
 
-class Tree {
+export default class Tree {
   constructor(array) {
     if (!Array.isArray(array)) this.array = [null];
     else this.array = [...new Set(array)].sort((a, b) => a - b);
